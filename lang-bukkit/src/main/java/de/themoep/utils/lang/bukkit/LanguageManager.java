@@ -20,6 +20,8 @@ package de.themoep.utils.lang.bukkit;
 
 import de.themoep.utils.lang.LanguageConfig;
 import de.themoep.utils.lang.LanguageManagerCore;
+import de.themoep.utils.lang.LanguageProvider;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -40,14 +42,19 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.logging.Level;
 
-public class LanguageManager extends LanguageManagerCore<Player> {
+public class LanguageManager extends LanguageManagerCore<CommandSender> {
 
     public LanguageManager(Plugin plugin, String defaultLocale, LanguageConfig... configs) {
         this(plugin, "languages", defaultLocale, configs);
     }
 
     public LanguageManager(Plugin plugin, String folder, String defaultLocale, LanguageConfig... configs) {
-        super(defaultLocale, new File(plugin.getDataFolder(), folder), Player::getLocale, configs);
+        super(defaultLocale, new File(plugin.getDataFolder(), folder), sender -> {
+            if (sender instanceof Player) {
+                return ((Player) sender).getLocale();
+            }
+            return null;
+        }, configs);
         try {
             URI uri = plugin.getClass().getResource(folder.isEmpty() ? "" : "/" + folder).toURI();
             try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {

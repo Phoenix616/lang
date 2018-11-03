@@ -59,17 +59,20 @@ public abstract class LanguageManagerCore<T> {
      *          If no config is defined for that locale it will return the default locale.
      */
     public LanguageConfig getConfig(String locale) {
+        if (locale == null) {
+            return getDefaultConfig();
+        }
         return languages.getOrDefault(locale.toLowerCase(Locale.ENGLISH), getDefaultConfig());
     }
 
     /**
-     * Get a language config for a player object using the specified provider
-     * @param player    The player to get the language config for
+     * Get a language config for a sender object using the specified provider
+     * @param sender    The sender to get the language config for
      * @return  The language config that holds all messages for the locale specified by the provider.
      *          If no config is defined for that locale it will return the default locale.
      */
-    public LanguageConfig getConfig(T player) {
-        return getConfig(provider.getLanguage(player));
+    public LanguageConfig getConfig(T sender) {
+        return getConfig(provider.getLanguage(sender));
     }
 
     /**

@@ -21,9 +21,9 @@ package de.themoep.utils.lang;
 public interface LanguageProvider<T> {
 
     /**
-     * Get the language of a player object
-     * @param player    The player object
-     * @return          The language for that player, if null it should
+     * Get the language of a sender object
+     * @param sender    The sender object
+     * @return          The language for that sender, if null it should
      */
-    String getLanguage(T player);
+    String getLanguage(T sender);
 }
