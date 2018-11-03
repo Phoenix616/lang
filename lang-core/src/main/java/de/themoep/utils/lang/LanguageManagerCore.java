@@ -23,16 +23,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class LanguageManagerCore {
+public abstract class LanguageManagerCore<T> {
     private final File folder;
     private String defaultLocale;
     private LanguageConfig defaultConfig = null;
 
+    private LanguageProvider<T> provider;
+
     private Map<String, LanguageConfig> languages = new ConcurrentHashMap<>();
 
-    public LanguageManagerCore(String defaultLocale, File folder, LanguageConfig... configs) {
+    public LanguageManagerCore(String defaultLocale, File folder, LanguageProvider<T> provider, LanguageConfig... configs) {
         this.defaultLocale = defaultLocale;
         this.folder = folder;
+        this.provider = provider;
         for (LanguageConfig config : configs) {
             languages.put(config.getLocale().toLowerCase(Locale.ENGLISH), config);
         }
@@ -57,6 +60,16 @@ public abstract class LanguageManagerCore {
      */
     public LanguageConfig getConfig(String locale) {
         return languages.getOrDefault(locale.toLowerCase(Locale.ENGLISH), getDefaultConfig());
+    }
+
+    /**
+     * Get a language config for a player object using the specified provider
+     * @param player    The player to get the language config for
+     * @return  The language config that holds all messages for the locale specified by the provider.
+     *          If no config is defined for that locale it will return the default locale.
+     */
+    public LanguageConfig getConfig(T player) {
+        return getConfig(provider.getLanguage(player));
     }
 
     /**
@@ -103,5 +116,25 @@ public abstract class LanguageManagerCore {
      */
     public File getFolder() {
         return folder;
+    }
+
+    /**
+     * Set the provider for the player's language
+     * @param provider The provider
+     * @throws IllegalArgumentException when provider is null
+     */
+    public void setProvider(LanguageProvider<T> provider) throws IllegalArgumentException {
+        if (provider == null) {
+            throw new IllegalArgumentException("Provider cannot be null!");
+        }
+        this.provider = provider;
+    }
+
+    /**
+     * Get the specified language provider
+     * @return The specified provider or null if not set
+     */
+    public LanguageProvider<T> getProvider() {
+        return provider;
     }
 }

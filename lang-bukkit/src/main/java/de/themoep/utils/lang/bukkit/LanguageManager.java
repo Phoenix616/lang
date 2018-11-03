@@ -18,8 +18,8 @@ package de.themoep.utils.lang.bukkit;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import de.themoep.utils.lang.LanguageManagerCore;
 import de.themoep.utils.lang.LanguageConfig;
+import de.themoep.utils.lang.LanguageManagerCore;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -40,14 +40,14 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.logging.Level;
 
-public class LanguageManager extends LanguageManagerCore {
+public class LanguageManager extends LanguageManagerCore<Player> {
 
     public LanguageManager(Plugin plugin, String defaultLocale, LanguageConfig... configs) {
         this(plugin, "languages", defaultLocale, configs);
     }
 
     public LanguageManager(Plugin plugin, String folder, String defaultLocale, LanguageConfig... configs) {
-        super(defaultLocale, new File(plugin.getDataFolder(), folder), configs);
+        super(defaultLocale, new File(plugin.getDataFolder(), folder), Player::getLocale, configs);
         try {
             URI uri = plugin.getClass().getResource(folder.isEmpty() ? "" : "/" + folder).toURI();
             try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {
@@ -68,15 +68,5 @@ public class LanguageManager extends LanguageManagerCore {
         } catch (URISyntaxException | IOException e) {
             plugin.getLogger().log(Level.WARNING, "Failed to automatically load all available languages! " + e.getMessage());
         }
-    }
-
-    /**
-     * Get a language config for a player's selected client locale
-     * @param player    The player to get the language config for
-     * @return  The language config that holds all messages for the player client's locale.
-     *          If no config is defined for that locale it will return the default locale.
-     */
-    public LanguageConfig getConfig(Player player) {
-        return getConfig(player.getLocale());
     }
 }
