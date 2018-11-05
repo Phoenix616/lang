@@ -20,9 +20,9 @@ package de.themoep.utils.lang;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class LanguageManagerCore<T> {
     private final File folder;
@@ -31,7 +31,7 @@ public abstract class LanguageManagerCore<T> {
 
     private LanguageProvider<T> provider;
 
-    private Map<String, LanguageConfig> languages = new ConcurrentHashMap<>();
+    private Map<String, LanguageConfig> languages = new LinkedHashMap<>();
 
     public LanguageManagerCore(String defaultLocale, File folder, LanguageProvider<T> provider, LanguageConfig... configs) {
         this.defaultLocale = defaultLocale;
@@ -112,11 +112,11 @@ public abstract class LanguageManagerCore<T> {
     /**
      * Set the default locale to use when no special one was specified or the one requested doesn't exist.
      * Also used as the default config when querying a message by its key.
+     * If set to null it will use the first define language config.
      * @param locale The default locale string
      */
     public void setDefaultLocale(String locale) {
         defaultLocale = locale;
-        defaultConfig = languages.get(defaultLocale.toLowerCase(Locale.ENGLISH));
         for (LanguageConfig config : languages.values()) {
             config.setDefaults(getDefaultConfig());
         }
@@ -124,16 +124,16 @@ public abstract class LanguageManagerCore<T> {
 
     /**
      * Get the default language config
-     * @return The default language config (or null if no default was configured)
+     * @return The default language config. If none was defined it will return the first found language. If none is found then it returns null.
      */
     public LanguageConfig getDefaultConfig() {
-        if (defaultConfig != null && (defaultLocale == null || defaultLocale.equals(defaultConfig.getLocale()))) {
+        if (defaultConfig != null && defaultLocale != null && defaultLocale.equals(defaultConfig.getLocale())) {
             return defaultConfig;
         }
         if (defaultLocale == null) {
             defaultConfig = languages.isEmpty() ? null : languages.values().iterator().next();
         } else {
-            defaultConfig = languages.get(defaultLocale);
+            defaultConfig = languages.get(defaultLocale.toLowerCase(Locale.ENGLISH));
         }
         return defaultConfig;
     }
