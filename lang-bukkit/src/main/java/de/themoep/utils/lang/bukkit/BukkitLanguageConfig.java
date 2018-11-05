@@ -67,21 +67,14 @@ public class BukkitLanguageConfig extends LanguageConfig {
                     parent.mkdirs();
                 }
                 try {
-                    OutputStream out = new FileOutputStream(configFile);
-                    byte[] buf = new byte[in.available()];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                    out.close();
-                    in.close();
+                    defaultConfig.save(configFile);
                     return true;
                 } catch (IOException ex) {
                     plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
                 }
             }
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not load defautl config from " + resourcePath, ex);
+            plugin.getLogger().log(Level.SEVERE, "Could not load defaut config from " + resourcePath, ex);
         }
         return false;
     }
