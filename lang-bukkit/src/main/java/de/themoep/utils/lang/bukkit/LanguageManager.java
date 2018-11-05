@@ -20,7 +20,6 @@ package de.themoep.utils.lang.bukkit;
 
 import de.themoep.utils.lang.LanguageConfig;
 import de.themoep.utils.lang.LanguageManagerCore;
-import de.themoep.utils.lang.LanguageProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -50,39 +49,48 @@ public class LanguageManager extends LanguageManagerCore<CommandSender> {
     }
 
     public LanguageManager(Plugin plugin, String folder, String defaultLocale, LanguageConfig... configs) {
+        this(plugin, folder, folder, defaultLocale, configs);
+    }
+
+    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, LanguageConfig... configs) {
         super(defaultLocale, new File(plugin.getDataFolder(), folder), sender -> {
             if (sender instanceof Player) {
                 return ((Player) sender).getLocale();
             }
             return null;
         }, configs);
-        if (folder.isEmpty()) {
-            throw new IllegalArgumentException("Folder cannot be empty!");
+        if (resourceFolder.isEmpty()) {
+            resourceFolder = "languages";
         }
         try {
-            URL url = plugin.getClass().getResource("/" + folder);
+            URL url = plugin.getClass().getResource("/" + resourceFolder);
             if (url == null) {
-                plugin.getLogger().log(Level.SEVERE, "Could not find folder '/" + folder + "' in jar!");
+                plugin.getLogger().log(Level.SEVERE, "Could not find folder '/" + resourceFolder + "' in jar!");
                 return;
             }
+
             URI uri = url.toURI();
             try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {
                 Path myPath = Paths.get(uri);
+                String finalResourceFolder = resourceFolder;
                 Files.walkFileTree(myPath, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         String fileName = file.getFileName().toString();
                         if (fileName.startsWith(LanguageConfig.FILE_PREFIX) && fileName.endsWith(LanguageConfig.FILE_SUFFIX)) {
                             String locale = fileName.substring(LanguageConfig.FILE_PREFIX.length(), fileName.length() - LanguageConfig.FILE_SUFFIX.length());
-                            addConfig(new BukkitLanguageConfig(plugin, folder, locale));
+                            addConfig(new BukkitLanguageConfig(plugin, finalResourceFolder, folder, locale));
                             plugin.getLogger().log(Level.INFO, "Found locale " + locale + "!");
                         }
                         return FileVisitResult.CONTINUE;
                     }
                 });
             }
+            if (getConfigs().isEmpty()) {
+                plugin.getLogger().log(Level.WARNING, "No language files found in folder '/" + resourceFolder + "' inside the jar!");
+            }
         } catch (URISyntaxException | IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Failed to automatically load all available languages! " + e.getMessage());
+            plugin.getLogger().log(Level.WARNING, "Failed to automatically load all available languages!", e);
         }
     }
 }

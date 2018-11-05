@@ -24,18 +24,28 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.logging.Level;
 
 public class BukkitLanguageConfig extends LanguageConfig {
     private final Plugin plugin;
     private final String resourcePath;
     private FileConfiguration config;
 
-    public BukkitLanguageConfig(Plugin plugin, String folder, String locale) {
-        super(new File(plugin.getDataFolder(), folder), locale);
+    public BukkitLanguageConfig(JavaPlugin plugin, String folder, String locale) {
+        this(plugin, folder, folder, locale);
+    }
+
+    public BukkitLanguageConfig(Plugin plugin, String resourceFolder, String folder, String locale) {
+        super(folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
         this.plugin = plugin;
-        this.resourcePath = folder.isEmpty() ? configFile.getName() : (folder + "/" + configFile.getName());
+        this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
         saveConfigResource();
         loadConfig();
     }
@@ -48,8 +58,28 @@ public class BukkitLanguageConfig extends LanguageConfig {
     @Override
     public boolean saveConfigResource() {
         if (!configFile.exists()) {
-            plugin.saveResource(resourcePath, false);
-            return true;
+            File parent = configFile.getParentFile();
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+            InputStream in = plugin.getResource(resourcePath);
+            if (in == null) {
+                plugin.getLogger().log(Level.SEVERE, "No resource '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
+                return false;
+            }
+            try {
+                OutputStream out = new FileOutputStream(configFile);
+                byte[] buf = new byte[in.available()];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.close();
+                in.close();
+                return true;
+            } catch (IOException ex) {
+                plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+            }
         }
         return false;
     }
