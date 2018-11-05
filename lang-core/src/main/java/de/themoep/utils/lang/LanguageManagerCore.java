@@ -19,6 +19,7 @@ package de.themoep.utils.lang;
  */
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,6 +74,14 @@ public abstract class LanguageManagerCore<T> {
      */
     public LanguageConfig getConfig(T sender) {
         return getConfig(provider.getLanguage(sender));
+    }
+
+    /**
+     * Get all defined language configs
+     * @return A collection of defined language configs
+     */
+    public Collection<LanguageConfig> getConfigs() {
+        return languages.values();
     }
 
     /**

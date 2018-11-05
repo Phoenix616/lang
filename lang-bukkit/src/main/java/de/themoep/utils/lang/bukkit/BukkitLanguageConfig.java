@@ -37,6 +37,7 @@ public class BukkitLanguageConfig extends LanguageConfig {
         this.plugin = plugin;
         this.resourcePath = folder.isEmpty() ? configFile.getName() : (folder + "/" + configFile.getName());
         saveConfigResource();
+        loadConfig();
     }
 
     @Override

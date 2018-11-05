@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
@@ -55,8 +56,16 @@ public class LanguageManager extends LanguageManagerCore<CommandSender> {
             }
             return null;
         }, configs);
+        if (folder.isEmpty()) {
+            throw new IllegalArgumentException("Folder cannot be empty!");
+        }
         try {
-            URI uri = plugin.getClass().getResource(folder.isEmpty() ? "" : "/" + folder).toURI();
+            URL url = plugin.getClass().getResource("/" + folder);
+            if (url == null) {
+                plugin.getLogger().log(Level.SEVERE, "Could not find folder '/" + folder + "' in jar!");
+                return;
+            }
+            URI uri = url.toURI();
             try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {
                 Path myPath = Paths.get(uri);
                 Files.walkFileTree(myPath, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
