@@ -19,12 +19,31 @@ package de.themoep.utils.lang;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class LanguageManagerCore<T> {
+    private final String resourceFolder;
     private final File folder;
     private String defaultLocale;
     private LanguageConfig defaultConfig = null;
@@ -33,8 +52,12 @@ public abstract class LanguageManagerCore<T> {
 
     private Map<String, LanguageConfig> languages = new LinkedHashMap<>();
 
-    public LanguageManagerCore(String defaultLocale, File folder, LanguageProvider<T> provider, LanguageConfig... configs) {
+    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<T> provider, LanguageConfig... configs) {
         this.defaultLocale = defaultLocale;
+        if (resourceFolder == null || resourceFolder.isEmpty()) {
+            resourceFolder = "languages";
+        }
+        this.resourceFolder = resourceFolder;
         this.folder = folder;
         this.provider = provider;
         for (LanguageConfig config : configs) {
@@ -43,13 +66,63 @@ public abstract class LanguageManagerCore<T> {
         setDefaultLocale(defaultLocale);
     }
 
+    public abstract void loadConfigs();
+
+    protected void loadConfigs(Class<?> pluginClass, Logger logger, Function<String, LanguageConfig> configCreator) {
+        try {
+            URL url = pluginClass.getResource("/" + resourceFolder);
+            if (url != null) {
+                URI uri = url.toURI();
+                try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {
+                    loadInTree(Paths.get(uri), logger, configCreator);
+                }
+                if (getConfigs().isEmpty()) {
+                    logger.log(Level.WARNING, "No language files found in folder '/" + resourceFolder + "' inside the jar!");
+                }
+            } else {
+                logger.log(Level.WARNING, "Could not find folder '/" + resourceFolder + "' in jar!");
+            }
+        } catch (URISyntaxException | IOException e) {
+            logger.log(Level.WARNING, "Failed to automatically load languages from the jar!", e);
+        }
+
+        // Load all files in plugin data folder that aren't already loaded
+        loadInTree(folder.toPath(), logger, locale -> {
+            if (!languages.containsKey(locale.toLowerCase(Locale.ENGLISH))) {
+                return configCreator.apply(locale);
+            }
+            return null;
+        });
+    }
+
+    private void loadInTree(Path path, Logger logger, Function<String, LanguageConfig> configCreator) {
+        try {
+            Files.walkFileTree(path, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    String fileName = file.getFileName().toString();
+                    if (fileName.startsWith(LanguageConfig.FILE_PREFIX) && fileName.endsWith(LanguageConfig.FILE_SUFFIX)) {
+                        String locale = fileName.substring(LanguageConfig.FILE_PREFIX.length(), fileName.length() - LanguageConfig.FILE_SUFFIX.length());
+                        LanguageConfig config = configCreator.apply(locale);
+                        if (config != null) {
+                            addConfig(config);
+                            logger.log(Level.INFO, "Found locale " + locale + "!");
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Failed to automatically load languages from " + path + "!", e);
+        }
+    }
+
     /**
      * Add a new language config for a specific locale
      * @param config    The language config that holds all messages for the specified locale
      * @return The previous language config if it existed or <tt>null</tt> if not
      */
     public LanguageConfig addConfig(LanguageConfig config) {
-        config.setDefaults(getDefaultConfig());
         return languages.put(config.getLocale().toLowerCase(Locale.ENGLISH), config);
     }
 
@@ -117,9 +190,6 @@ public abstract class LanguageManagerCore<T> {
      */
     public void setDefaultLocale(String locale) {
         defaultLocale = locale;
-        for (LanguageConfig config : languages.values()) {
-            config.setDefaults(getDefaultConfig());
-        }
     }
 
     /**
@@ -136,6 +206,14 @@ public abstract class LanguageManagerCore<T> {
             defaultConfig = languages.get(defaultLocale.toLowerCase(Locale.ENGLISH));
         }
         return defaultConfig;
+    }
+
+    /**
+     * Get the path to the folder that contains the default language configs inside of the jar
+     * @return The path to the folder, should never be null or empty!
+     */
+    public String getResourceFolder() {
+        return resourceFolder;
     }
 
     /**
@@ -165,4 +243,5 @@ public abstract class LanguageManagerCore<T> {
     public LanguageProvider<T> getProvider() {
         return provider;
     }
+
 }

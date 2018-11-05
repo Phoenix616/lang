@@ -34,29 +34,18 @@ public class BungeeLanguageConfig extends LanguageConfig {
     protected final static ConfigurationProvider yml = ConfigurationProvider.getProvider(YamlConfiguration.class);
 
     private final Plugin plugin;
-    private final String resourcePath;
     private Configuration config;
     private Configuration defaultConfig;
 
     public BungeeLanguageConfig(Plugin plugin, String folder, String locale) {
-        this(plugin, folder, folder, locale);
+        this(plugin, folder, folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
     }
 
-    public BungeeLanguageConfig(Plugin plugin, String resourceFolder, String folder, String locale) {
-        super(folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
+    public BungeeLanguageConfig(Plugin plugin, String resourceFolder, File folder, String locale) {
+        super(resourceFolder, folder, locale);
         this.plugin = plugin;
-        this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
-        loadFromJar();
         saveConfigResource();
-    }
-
-    private void loadFromJar() {
-        InputStream in = plugin.getResourceAsStream(resourcePath);
-        if (in == null) {
-            plugin.getLogger().log(Level.SEVERE, "No resource '" + resourcePath + "' found in " + plugin.getFile().getName() + "!");
-            return;
-        }
-        defaultConfig = config = yml.load(in);
+        loadConfig();
     }
 
     @Override
@@ -70,17 +59,26 @@ public class BungeeLanguageConfig extends LanguageConfig {
 
     @Override
     public boolean saveConfigResource() {
-        if (!configFile.exists()) {
-            File parent = configFile.getParentFile();
-            if (!parent.exists()) {
-                parent.mkdirs();
+        try (InputStream in = plugin.getResourceAsStream(resourcePath)) {
+            if (in == null) {
+                plugin.getLogger().log(Level.SEVERE, "No resource '" + resourcePath + "' found in " + plugin.getFile().getName() + "!");
+                return false;
             }
-            try {
-                yml.save(config, configFile);
-                return true;
-            } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+            defaultConfig = config = yml.load(in);
+            if (!configFile.exists()) {
+                File parent = configFile.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                try {
+                    yml.save(config, configFile);
+                    return true;
+                } catch (IOException ex) {
+                    plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+                }
             }
+        } catch (IOException ex) {
+            plugin.getLogger().log(Level.SEVERE, "Could not load defautl config from " + resourcePath, ex);
         }
         return false;
     }

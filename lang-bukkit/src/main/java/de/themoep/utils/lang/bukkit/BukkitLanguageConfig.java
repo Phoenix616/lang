@@ -20,7 +20,6 @@ package de.themoep.utils.lang.bukkit;
 
 import de.themoep.utils.lang.LanguageConfig;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -29,22 +28,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.logging.Level;
 
 public class BukkitLanguageConfig extends LanguageConfig {
     private final Plugin plugin;
-    private final String resourcePath;
     private FileConfiguration config;
+    private FileConfiguration defaultConfig;
 
     public BukkitLanguageConfig(Plugin plugin, String folder, String locale) {
-        this(plugin, folder, folder, locale);
+        this(plugin, folder, folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
     }
 
-    public BukkitLanguageConfig(Plugin plugin, String resourceFolder, String folder, String locale) {
-        super(folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
+    public BukkitLanguageConfig(Plugin plugin, String resourceFolder, File folder, String locale) {
+        super(resourceFolder, folder, locale);
         this.plugin = plugin;
-        this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
         saveConfigResource();
         loadConfig();
     }
@@ -56,29 +55,33 @@ public class BukkitLanguageConfig extends LanguageConfig {
 
     @Override
     public boolean saveConfigResource() {
-        if (!configFile.exists()) {
-            File parent = configFile.getParentFile();
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-            InputStream in = plugin.getResource(resourcePath);
+        try (InputStream in = plugin.getResource(resourcePath)) {
             if (in == null) {
                 plugin.getLogger().log(Level.SEVERE, "No resource '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
                 return false;
             }
-            try {
-                OutputStream out = new FileOutputStream(configFile);
-                byte[] buf = new byte[in.available()];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+            defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(in));
+            if (!configFile.exists()) {
+                File parent = configFile.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
                 }
-                out.close();
-                in.close();
-                return true;
-            } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+                try {
+                    OutputStream out = new FileOutputStream(configFile);
+                    byte[] buf = new byte[in.available()];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    out.close();
+                    in.close();
+                    return true;
+                } catch (IOException ex) {
+                    plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+                }
             }
+        } catch (IOException ex) {
+            plugin.getLogger().log(Level.SEVERE, "Could not load defautl config from " + resourcePath, ex);
         }
         return false;
     }
@@ -86,9 +89,9 @@ public class BukkitLanguageConfig extends LanguageConfig {
     @Override
     public void setDefaults(LanguageConfig defaults) {
         if (defaults == null) {
-            config.setDefaults(new MemoryConfiguration());
+            defaultConfig = null;
         } else if (defaults instanceof BukkitLanguageConfig) {
-            config.setDefaults(((BukkitLanguageConfig) defaults).config);
+            defaultConfig = ((BukkitLanguageConfig) defaults).config;
         }
     }
 
@@ -99,7 +102,7 @@ public class BukkitLanguageConfig extends LanguageConfig {
 
     @Override
     public String get(String key) {
-        String string = config.getString(key);
+        String string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
         if (string == null) {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }

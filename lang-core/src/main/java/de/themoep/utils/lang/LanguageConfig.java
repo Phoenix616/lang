@@ -26,11 +26,13 @@ public abstract class LanguageConfig {
     public static final String FILE_SUFFIX = ".yml";
 
     private final String locale;
+    protected final String resourcePath;
     protected final File configFile;
 
-    protected LanguageConfig(File folder, String locale) {
+    protected LanguageConfig(String resourceFolder, File folder, String locale) {
         this.locale = locale;
         this.configFile = new File(folder, FILE_PREFIX + locale + FILE_SUFFIX);
+        this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
     }
 
     /**
