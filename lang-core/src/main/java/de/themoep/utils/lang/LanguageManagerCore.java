@@ -63,7 +63,23 @@ public abstract class LanguageManagerCore<T> {
         if (locale == null) {
             return getDefaultConfig();
         }
-        return languages.getOrDefault(locale.toLowerCase(Locale.ENGLISH), getDefaultConfig());
+        locale = locale.toLowerCase(Locale.ENGLISH);
+        LanguageConfig config = languages.get(locale);
+        if (config == null && locale.contains("_")) {
+            config = languages.get(locale.split("_")[0]);
+            if (config == null) {
+                config = languages.get(locale.split("_")[1]);
+            }
+        }
+        if (config == null) {
+            for (LanguageConfig c : getConfigs()) {
+                if (locale.startsWith(c.getLocale()) || locale.endsWith(c.getLocale())) {
+                    config = c;
+                    break;
+                }
+            }
+        }
+        return config != null ? config : getDefaultConfig();
     }
 
     /**
