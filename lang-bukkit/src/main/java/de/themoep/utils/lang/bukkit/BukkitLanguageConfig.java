@@ -25,11 +25,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.logging.Level;
 
 public class BukkitLanguageConfig extends LanguageConfig {
@@ -57,7 +55,7 @@ public class BukkitLanguageConfig extends LanguageConfig {
     public boolean saveConfigResource() {
         try (InputStream in = plugin.getResource(resourcePath)) {
             if (in == null) {
-                plugin.getLogger().log(Level.SEVERE, "No resource '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
+                plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
                 return false;
             }
             defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(in));
