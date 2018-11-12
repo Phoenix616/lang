@@ -21,13 +21,16 @@ package de.themoep.utils.lang;
 import java.io.File;
 import java.util.Map;
 
-public abstract class LanguageConfig {
+public abstract class LanguageConfig<T> {
     public static final String FILE_PREFIX = "lang.";
     public static final String FILE_SUFFIX = ".yml";
 
     private final String locale;
     protected final String resourcePath;
     protected final File configFile;
+
+    protected T config;
+    protected T defaultConfig;
 
     protected LanguageConfig(String resourceFolder, File folder, String locale) {
         this.locale = locale;
@@ -47,12 +50,6 @@ public abstract class LanguageConfig {
     public abstract boolean saveConfigResource();
 
     /**
-     * Set the default config of this config
-     * @param defaults The default or config or null if it should not have one
-     */
-    public abstract void setDefaults(LanguageConfig defaults);
-
-    /**
      * Check if the config contains a certain key
      * @param key   The key of the string
      * @return <tt>true</tt> if this config (and not the defaults) has this key, <tt>false</tt> if not
@@ -65,6 +62,12 @@ public abstract class LanguageConfig {
      * @return The message or an error message if it doesn't exist; never null! (use {@link #contains(String)} to check existance)
      */
     public abstract String get(String key);
+
+    /**
+     * Get the raw config object
+     * @return The raw config object
+     */
+    public abstract T getRawConfig();
 
     /**
      * Get a string from the config by its key
@@ -113,5 +116,17 @@ public abstract class LanguageConfig {
      */
     public String getLocale() {
         return locale;
+    }
+
+    /**
+     * Set the default config of this config
+     * @param defaults The default or config or null if it should not have one
+     */
+    public void setDefaults(LanguageConfig<? extends T> defaults) {
+        if (defaults == null) {
+            defaultConfig = null;
+        } else {
+            defaultConfig = defaults.getRawConfig();
+        }
     }
 }

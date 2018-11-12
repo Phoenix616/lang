@@ -31,12 +31,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 
-public class BungeeLanguageConfig extends LanguageConfig {
+public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
     protected final static ConfigurationProvider yml = ConfigurationProvider.getProvider(YamlConfiguration.class);
 
     private final Plugin plugin;
-    private Configuration config;
-    private Configuration defaultConfig;
 
     public BungeeLanguageConfig(Plugin plugin, String folder, String locale) {
         this(plugin, folder, folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
@@ -85,15 +83,6 @@ public class BungeeLanguageConfig extends LanguageConfig {
     }
 
     @Override
-    public void setDefaults(LanguageConfig defaults) {
-        if (defaults == null) {
-            defaultConfig = null;
-        } else if (defaults instanceof BungeeLanguageConfig) {
-            defaultConfig = ((BungeeLanguageConfig) defaults).config;
-        }
-    }
-
-    @Override
     public boolean contains(String key) {
         return config.contains(key);
     }
@@ -117,5 +106,10 @@ public class BungeeLanguageConfig extends LanguageConfig {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }
         return ChatColor.translateAlternateColorCodes('&', string);
+    }
+
+    @Override
+    public Configuration getRawConfig() {
+        return config;
     }
 }

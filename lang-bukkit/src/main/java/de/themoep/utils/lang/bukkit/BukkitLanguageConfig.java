@@ -31,10 +31,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.logging.Level;
 
-public class BukkitLanguageConfig extends LanguageConfig {
+public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
     private final Plugin plugin;
-    private FileConfiguration config;
-    private FileConfiguration defaultConfig;
 
     public BukkitLanguageConfig(Plugin plugin, String folder, String locale) {
         this(plugin, folder, folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
@@ -79,15 +77,6 @@ public class BukkitLanguageConfig extends LanguageConfig {
     }
 
     @Override
-    public void setDefaults(LanguageConfig defaults) {
-        if (defaults == null) {
-            defaultConfig = null;
-        } else if (defaults instanceof BukkitLanguageConfig) {
-            defaultConfig = ((BukkitLanguageConfig) defaults).config;
-        }
-    }
-
-    @Override
     public boolean contains(String key) {
         return config.contains(key, true);
     }
@@ -110,5 +99,10 @@ public class BukkitLanguageConfig extends LanguageConfig {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }
         return ChatColor.translateAlternateColorCodes('&', string);
+    }
+
+    @Override
+    public FileConfiguration getRawConfig() {
+        return config;
     }
 }
