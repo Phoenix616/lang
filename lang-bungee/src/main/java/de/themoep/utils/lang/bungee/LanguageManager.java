@@ -18,26 +18,26 @@ package de.themoep.utils.lang.bungee;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import de.themoep.utils.lang.LanguageConfig;
 import de.themoep.utils.lang.LanguageManagerCore;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 
 import java.io.File;
 
-public class LanguageManager extends LanguageManagerCore<CommandSender> {
+public class LanguageManager extends LanguageManagerCore<CommandSender, Configuration> {
     private final Plugin plugin;
 
-    public LanguageManager(Plugin plugin, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String defaultLocale, BungeeLanguageConfig... configs) {
         this(plugin, "languages", defaultLocale, configs);
     }
 
-    public LanguageManager(Plugin plugin, String folder, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String folder, String defaultLocale, BungeeLanguageConfig... configs) {
         this(plugin, folder, folder, defaultLocale, configs);
     }
 
-    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, BungeeLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
             if (sender instanceof ProxiedPlayer) {
                 return ((ProxiedPlayer) sender).getLocale().getLanguage().replace('-', '_');

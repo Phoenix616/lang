@@ -42,17 +42,22 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class LanguageManagerCore<T> {
+/**
+ * The core language manager
+ * @param <S> The command sender type
+ * @param <C> The configuration type
+ */
+public abstract class LanguageManagerCore<S, C> {
     private final String resourceFolder;
     private final File folder;
     private String defaultLocale;
-    private LanguageConfig defaultConfig = null;
+    private LanguageConfig<C> defaultConfig = null;
 
-    private LanguageProvider<T> provider;
+    private LanguageProvider<S> provider;
 
-    private Map<String, LanguageConfig> languages = new LinkedHashMap<>();
+    private Map<String, LanguageConfig<C>> languages = new LinkedHashMap<>();
 
-    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<T> provider, LanguageConfig... configs) {
+    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, LanguageConfig<C>... configs) {
         this.defaultLocale = defaultLocale;
         if (resourceFolder == null || resourceFolder.isEmpty()) {
             resourceFolder = "languages";
@@ -68,7 +73,7 @@ public abstract class LanguageManagerCore<T> {
 
     public abstract void loadConfigs();
 
-    protected void loadConfigs(Class<?> pluginClass, Logger logger, Function<String, LanguageConfig> configCreator) {
+    protected void loadConfigs(Class<?> pluginClass, Logger logger, Function<String, LanguageConfig<C>> configCreator) {
         try {
             URL url = pluginClass.getResource("/" + resourceFolder);
             if (url != null) {
@@ -95,7 +100,7 @@ public abstract class LanguageManagerCore<T> {
         });
     }
 
-    private void loadInTree(Path path, Logger logger, Function<String, LanguageConfig> configCreator) {
+    private void loadInTree(Path path, Logger logger, Function<String, LanguageConfig<C>> configCreator) {
         try {
             Files.walkFileTree(path, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
                 @Override
@@ -103,7 +108,7 @@ public abstract class LanguageManagerCore<T> {
                     String fileName = file.getFileName().toString();
                     if (fileName.startsWith(LanguageConfig.FILE_PREFIX) && fileName.endsWith(LanguageConfig.FILE_SUFFIX)) {
                         String locale = fileName.substring(LanguageConfig.FILE_PREFIX.length(), fileName.length() - LanguageConfig.FILE_SUFFIX.length());
-                        LanguageConfig config = configCreator.apply(locale);
+                        LanguageConfig<C> config = configCreator.apply(locale);
                         if (config != null) {
                             addConfig(config);
                             logger.log(Level.INFO, "Found locale " + locale + "!");
@@ -122,7 +127,7 @@ public abstract class LanguageManagerCore<T> {
      * @param config    The language config that holds all messages for the specified locale
      * @return The previous language config if it existed or <tt>null</tt> if not
      */
-    public LanguageConfig addConfig(LanguageConfig config) {
+    public LanguageConfig<C> addConfig(LanguageConfig<C> config) {
         return languages.put(config.getLocale().toLowerCase(Locale.ENGLISH), config);
     }
 
@@ -132,7 +137,7 @@ public abstract class LanguageManagerCore<T> {
      * @return  The language config that holds all messages for the specified locale.
      *          If no config is defined for that locale it will return the default locale.
      */
-    public LanguageConfig getConfig(String locale) {
+    public LanguageConfig<C> getConfig(String locale) {
         if (locale == null) {
             return getDefaultConfig();
         }
@@ -161,7 +166,7 @@ public abstract class LanguageManagerCore<T> {
      * @return  The language config that holds all messages for the locale specified by the provider.
      *          If no config is defined for that locale it will return the default locale.
      */
-    public LanguageConfig getConfig(T sender) {
+    public LanguageConfig<C> getConfig(S sender) {
         return getConfig(provider.getLanguage(sender));
     }
 
@@ -169,7 +174,7 @@ public abstract class LanguageManagerCore<T> {
      * Get all defined language configs
      * @return A collection of defined language configs
      */
-    public Collection<LanguageConfig> getConfigs() {
+    public Collection<LanguageConfig<C>> getConfigs() {
         return languages.values();
     }
 
@@ -196,7 +201,7 @@ public abstract class LanguageManagerCore<T> {
      * Get the default language config
      * @return The default language config. If none was defined it will return the first found language. If none is found then it returns null.
      */
-    public LanguageConfig getDefaultConfig() {
+    public LanguageConfig<C> getDefaultConfig() {
         if (defaultConfig != null && defaultLocale != null && defaultLocale.equals(defaultConfig.getLocale())) {
             return defaultConfig;
         }
@@ -229,7 +234,7 @@ public abstract class LanguageManagerCore<T> {
      * @param provider The provider
      * @throws IllegalArgumentException when provider is null
      */
-    public void setProvider(LanguageProvider<T> provider) throws IllegalArgumentException {
+    public void setProvider(LanguageProvider<S> provider) throws IllegalArgumentException {
         if (provider == null) {
             throw new IllegalArgumentException("Provider cannot be null!");
         }
@@ -240,7 +245,7 @@ public abstract class LanguageManagerCore<T> {
      * Get the specified language provider
      * @return The specified provider or null if not set
      */
-    public LanguageProvider<T> getProvider() {
+    public LanguageProvider<S> getProvider() {
         return provider;
     }
 

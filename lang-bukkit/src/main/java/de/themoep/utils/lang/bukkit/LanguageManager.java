@@ -18,26 +18,26 @@ package de.themoep.utils.lang.bukkit;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import de.themoep.utils.lang.LanguageConfig;
 import de.themoep.utils.lang.LanguageManagerCore;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-public class LanguageManager extends LanguageManagerCore<CommandSender> {
+public class LanguageManager extends LanguageManagerCore<CommandSender, FileConfiguration> {
     private final Plugin plugin;
 
-    public LanguageManager(Plugin plugin, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String defaultLocale, BukkitLanguageConfig... configs) {
         this(plugin, "languages", defaultLocale, configs);
     }
 
-    public LanguageManager(Plugin plugin, String folder, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String folder, String defaultLocale, BukkitLanguageConfig... configs) {
         this(plugin, folder, folder, defaultLocale, configs);
     }
 
-    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, LanguageConfig... configs) {
+    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, BukkitLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
             if (sender instanceof Player) {
                 return ((Player) sender).getLocale();

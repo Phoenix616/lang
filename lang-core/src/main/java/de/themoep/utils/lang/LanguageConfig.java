@@ -21,7 +21,7 @@ package de.themoep.utils.lang;
 import java.io.File;
 import java.util.Map;
 
-public abstract class LanguageConfig<T> {
+public abstract class LanguageConfig<C> {
     public static final String FILE_PREFIX = "lang.";
     public static final String FILE_SUFFIX = ".yml";
 
@@ -29,8 +29,8 @@ public abstract class LanguageConfig<T> {
     protected final String resourcePath;
     protected final File configFile;
 
-    protected T config;
-    protected T defaultConfig;
+    protected C config;
+    protected C defaultConfig;
 
     protected LanguageConfig(String resourceFolder, File folder, String locale) {
         this.locale = locale;
@@ -67,7 +67,7 @@ public abstract class LanguageConfig<T> {
      * Get the raw config object
      * @return The raw config object
      */
-    public abstract T getRawConfig();
+    public abstract C getRawConfig();
 
     /**
      * Get a string from the config by its key
@@ -122,7 +122,7 @@ public abstract class LanguageConfig<T> {
      * Set the default config of this config
      * @param defaults The default or config or null if it should not have one
      */
-    public void setDefaults(LanguageConfig<? extends T> defaults) {
+    public void setDefaults(LanguageConfig<? extends C> defaults) {
         if (defaults == null) {
             defaultConfig = null;
         } else {
