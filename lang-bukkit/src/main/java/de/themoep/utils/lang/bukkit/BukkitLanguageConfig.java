@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.logging.Level;
 
 public class BukkitLanguageConfig extends LanguageConfig {
@@ -93,7 +94,18 @@ public class BukkitLanguageConfig extends LanguageConfig {
 
     @Override
     public String get(String key) {
-        String string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+        String string = null;
+        if (config.isString(key)) {
+            string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+        } else if (config.isList(key)) {
+            List<String> stringList = config.getStringList(key);
+            if (stringList == null) {
+                stringList = defaultConfig.getStringList(key);
+            }
+            if (stringList != null) {
+                string = String.join("\n", stringList);
+            }
+        }
         if (string == null) {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }

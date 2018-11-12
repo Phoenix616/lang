@@ -28,6 +28,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.logging.Level;
 
 public class BungeeLanguageConfig extends LanguageConfig {
@@ -99,7 +100,19 @@ public class BungeeLanguageConfig extends LanguageConfig {
 
     @Override
     public String get(String key) {
-        String string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+        Object o = config.get(key);
+        String string = null;
+        if (o instanceof String) {
+            string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+        } else if (o instanceof List) {
+            List<String> stringList = config.getStringList(key);
+            if (stringList == null) {
+                stringList = defaultConfig.getStringList(key);
+            }
+            if (stringList != null) {
+                string = String.join("\n", stringList);
+            }
+        }
         if (string == null) {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }
