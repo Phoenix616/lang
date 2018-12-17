@@ -71,7 +71,7 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
                 }
             }
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not load defaut config from " + resourcePath, ex);
+            plugin.getLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
         }
         return false;
     }

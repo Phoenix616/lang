@@ -77,7 +77,7 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
                 }
             }
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not load defautl config from " + resourcePath, ex);
+            plugin.getLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
         }
         return false;
     }
