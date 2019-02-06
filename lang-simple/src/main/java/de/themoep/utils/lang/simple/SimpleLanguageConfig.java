@@ -86,11 +86,7 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
 
     @Override
     public String get(String key) {
-        Object o = config.get(key);
-        String string = null;
-        if (o instanceof String) {
-            string = config.getProperty(key, defaultConfig != null ? defaultConfig.getProperty(key) : null);
-        }
+        String string = config.getProperty(key, defaultConfig != null ? defaultConfig.getProperty(key) : null);
         if (string == null) {
             return "Missing language key " + key + " for locale " + getLocale();
         }

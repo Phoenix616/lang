@@ -89,15 +89,12 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
 
     @Override
     public String get(String key) {
-        Object o = config.get(key);
+        Object o = config.get(key, defaultConfig != null ? defaultConfig.get(key) : null);
         String string = null;
         if (o instanceof String) {
-            string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+            string = (String) o;
         } else if (o instanceof List) {
-            List<String> stringList = config.getStringList(key);
-            if (stringList == null) {
-                stringList = defaultConfig.getStringList(key);
-            }
+            List<String> stringList = (List<String>) o;
             if (stringList != null) {
                 string = String.join("\n", stringList);
             }
