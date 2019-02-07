@@ -40,7 +40,9 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, FileConf
     public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, BukkitLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
             if (sender instanceof Player) {
-                return ((Player) sender).getLocale();
+                try {
+                    return ((Player) sender).getLocale();
+                } catch (NoSuchMethodError ignored) {}
             }
             return null;
         }, configs);
