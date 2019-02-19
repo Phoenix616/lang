@@ -56,6 +56,8 @@ public abstract class LanguageManagerCore<S, C> {
     private LanguageProvider<S> provider;
 
     private Map<String, LanguageConfig<C>> languages = new LinkedHashMap<>();
+    private String placeholderPrefix = "%";
+    private String placeholderSuffix = "%";
 
     protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, LanguageConfig<C>... configs) {
         this.defaultLocale = defaultLocale;
@@ -66,7 +68,7 @@ public abstract class LanguageManagerCore<S, C> {
         this.folder = folder;
         this.provider = provider;
         for (LanguageConfig config : configs) {
-            languages.put(config.getLocale().toLowerCase(Locale.ENGLISH), config);
+            addConfig(config);
         }
         setDefaultLocale(defaultLocale);
     }
@@ -128,6 +130,8 @@ public abstract class LanguageManagerCore<S, C> {
      * @return The previous language config if it existed or <tt>null</tt> if not
      */
     public LanguageConfig<C> addConfig(LanguageConfig<C> config) {
+        config.setPlaceholderPrefix(placeholderPrefix);
+        config.setPlaceholderSuffix(placeholderSuffix);
         return languages.put(config.getLocale().toLowerCase(Locale.ENGLISH), config);
     }
 
@@ -195,6 +199,42 @@ public abstract class LanguageManagerCore<S, C> {
      */
     public void setDefaultLocale(String locale) {
         defaultLocale = locale;
+    }
+
+    /**
+     * Get the prefix of placeholders for replacements
+     * @return The placeholder prefix
+     */
+    public String getPlaceholderPrefix() {
+        return placeholderPrefix;
+    }
+
+    /**
+     * Set the prefix of placeholders for replacements
+     * @param placeholderPrefix The placeholder prefix
+     */
+    public void setPlaceholderPrefix(String placeholderPrefix) {
+        this.placeholderPrefix = placeholderPrefix;
+        languages.values().forEach(c -> c.setPlaceholderPrefix(placeholderPrefix));
+        defaultConfig = null;
+    }
+
+    /**
+     * Get the suffix of placeholders for replacements
+     * @return The placeholder suffix
+     */
+    public String getPlaceholderSuffix() {
+        return placeholderSuffix;
+    }
+
+    /**
+     * Set the suffix of placeholders for replacements
+     * @param placeholderSuffix The placeholder suffix
+     */
+    public void setPlaceholderSuffix(String placeholderSuffix) {
+        this.placeholderSuffix = placeholderSuffix;
+        languages.values().forEach(c -> c.setPlaceholderSuffix(placeholderSuffix));
+        defaultConfig = null;
     }
 
     /**

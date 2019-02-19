@@ -29,6 +29,9 @@ public abstract class LanguageConfig<C> {
     protected final String resourcePath;
     protected final File configFile;
 
+    private String placeholderPrefix = "%";
+    private String placeholderSuffix = "%";
+
     protected C config;
     protected C defaultConfig;
 
@@ -101,11 +104,11 @@ public abstract class LanguageConfig<C> {
      * Replace placeholders in a string
      * @param string        The string to replace in
      * @param replacements  What to replace the placeholders with. The n-th index is the placeholder, the n+1-th the value.
-     * @return The string with all placeholders replaced (using %'s as placeholder indicators)
+     * @return The string with all placeholders replaced (using the configured placeholder prefix and suffix)
      */
-    private static String replace(String string, String... replacements) {
+    private String replace(String string, String... replacements) {
         for (int i = 0; i + 1 < replacements.length; i+=2) {
-            string = string.replace("%" + replacements[i] + "%", replacements[i+1]);
+            string = string.replace(placeholderPrefix + replacements[i] + placeholderSuffix, replacements[i+1]);
         }
         return string;
     }
@@ -128,5 +131,21 @@ public abstract class LanguageConfig<C> {
         } else {
             defaultConfig = defaults.getRawConfig();
         }
+    }
+
+    /**
+     * Set the prefix of placeholders for replacements
+     * @param placeholderPrefix The placeholder prefix
+     */
+    void setPlaceholderPrefix(String placeholderPrefix) {
+        this.placeholderPrefix = placeholderPrefix;
+    }
+
+    /**
+     * Set the suffix of placeholders for replacements
+     * @param placeholderSuffix The placeholder suffix
+     */
+    void setPlaceholderSuffix(String placeholderSuffix) {
+        this.placeholderSuffix = placeholderSuffix;
     }
 }
