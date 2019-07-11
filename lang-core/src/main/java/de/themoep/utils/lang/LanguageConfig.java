@@ -19,11 +19,16 @@ package de.themoep.utils.lang;
  */
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class LanguageConfig<C> {
     public static final String FILE_PREFIX = "lang.";
     public static final String FILE_SUFFIX = ".yml";
+
+    private static final Map<String, Pattern> PATTERN_CACHE = new HashMap<>();
 
     private final String locale;
     protected final String resourcePath;
@@ -108,7 +113,12 @@ public abstract class LanguageConfig<C> {
      */
     private String replace(String string, String... replacements) {
         for (int i = 0; i + 1 < replacements.length; i+=2) {
-            string = string.replace(placeholderPrefix + replacements[i] + placeholderSuffix, replacements[i+1]);
+            String placeholder = placeholderPrefix + replacements[i] + placeholderSuffix;
+            Pattern pattern = PATTERN_CACHE.get(placeholder);
+            if (pattern == null) {
+                PATTERN_CACHE.put(placeholder, pattern = Pattern.compile(placeholder, Pattern.LITERAL));
+            }
+            string = pattern.matcher(string).replaceAll(Matcher.quoteReplacement(replacements[i+1]));
         }
         return string;
     }
