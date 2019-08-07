@@ -113,6 +113,12 @@ public abstract class LanguageConfig<C> {
      */
     private String replace(String string, String... replacements) {
         for (int i = 0; i + 1 < replacements.length; i+=2) {
+            if (replacements[i] == null) {
+                continue;
+            }
+            if (replacements[i+1] == null) {
+                replacements[i+1] = "null";
+            }
             String placeholder = placeholderPrefix + replacements[i] + placeholderSuffix;
             Pattern pattern = PATTERN_CACHE.get(placeholder);
             if (pattern == null) {
