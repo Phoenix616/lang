@@ -116,15 +116,12 @@ public abstract class LanguageConfig<C> {
             if (replacements[i] == null) {
                 continue;
             }
-            if (replacements[i+1] == null) {
-                replacements[i+1] = "null";
-            }
             String placeholder = placeholderPrefix + replacements[i] + placeholderSuffix;
             Pattern pattern = PATTERN_CACHE.get(placeholder);
             if (pattern == null) {
                 PATTERN_CACHE.put(placeholder, pattern = Pattern.compile(placeholder, Pattern.LITERAL));
             }
-            string = pattern.matcher(string).replaceAll(Matcher.quoteReplacement(replacements[i+1]));
+            string = pattern.matcher(string).replaceAll(Matcher.quoteReplacement(replacements[i+1] != null ? replacements[i+1] : "null"));
         }
         return string;
     }
