@@ -35,13 +35,15 @@ public class LanguageManager extends LanguageManagerCore<Languaged.User, Propert
     }
 
     public LanguageManager(Languaged languaged, String resourceFolder, String folder, String defaultLocale, SimpleLanguageConfig... configs) {
-        super(defaultLocale, resourceFolder, new File(languaged.getDataFolder(), folder), sender -> null, configs);
+        super(defaultLocale, resourceFolder, new File(languaged.getDataFolder(), folder), sender -> null, "lang.", ".properties", configs);
         this.languaged = languaged;
         loadConfigs();
     }
 
     @Override
     public void loadConfigs() {
-        loadConfigs(languaged.getClass(), languaged.getLogger(), locale -> new SimpleLanguageConfig(languaged, getResourceFolder(), getFolder(), locale));
+        loadConfigs(languaged.getClass(), languaged.getLogger(), locale ->
+                new SimpleLanguageConfig(languaged, getResourceFolder(),
+                        new File(getFolder(), filePrefix + locale + fileSuffix), locale));
     }
 }

@@ -25,9 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class LanguageConfig<C> {
-    public static final String FILE_PREFIX = "lang.";
-    public static final String FILE_SUFFIX = ".yml";
-
     private static final Map<String, Pattern> PATTERN_CACHE = new HashMap<>();
 
     private final String locale;
@@ -40,9 +37,9 @@ public abstract class LanguageConfig<C> {
     protected C config;
     protected C defaultConfig;
 
-    protected LanguageConfig(String resourceFolder, File folder, String locale) {
+    protected LanguageConfig(String resourceFolder, File configFile, String locale) {
         this.locale = locale;
-        this.configFile = new File(folder, FILE_PREFIX + locale + FILE_SUFFIX);
+        this.configFile = configFile;
         this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
     }
 

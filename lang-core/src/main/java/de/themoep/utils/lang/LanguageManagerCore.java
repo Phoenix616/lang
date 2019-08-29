@@ -50,6 +50,8 @@ import java.util.logging.Logger;
 public abstract class LanguageManagerCore<S, C> {
     private final String resourceFolder;
     private final File folder;
+    protected final String filePrefix;
+    protected final String fileSuffix;
     private String defaultLocale;
     private LanguageConfig<C> defaultConfig = null;
 
@@ -59,8 +61,10 @@ public abstract class LanguageManagerCore<S, C> {
     private String placeholderPrefix = "%";
     private String placeholderSuffix = "%";
 
-    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, LanguageConfig<C>... configs) {
+    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, String filePrefix, String fileSuffix, LanguageConfig<C>... configs) {
         this.defaultLocale = defaultLocale;
+        this.filePrefix = filePrefix;
+        this.fileSuffix = fileSuffix;
         if (resourceFolder == null || resourceFolder.isEmpty()) {
             resourceFolder = "languages";
         }
@@ -108,8 +112,8 @@ public abstract class LanguageManagerCore<S, C> {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     String fileName = file.getFileName().toString();
-                    if (fileName.startsWith(LanguageConfig.FILE_PREFIX) && fileName.endsWith(LanguageConfig.FILE_SUFFIX)) {
-                        String locale = fileName.substring(LanguageConfig.FILE_PREFIX.length(), fileName.length() - LanguageConfig.FILE_SUFFIX.length());
+                    if (fileName.startsWith(filePrefix) && fileName.endsWith(fileSuffix)) {
+                        String locale = fileName.substring(filePrefix.length(), fileName.length() - fileSuffix.length());
                         LanguageConfig<C> config = configCreator.apply(locale);
                         if (config != null) {
                             addConfig(config);

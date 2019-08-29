@@ -31,12 +31,8 @@ import java.util.logging.Level;
 public class SimpleLanguageConfig extends LanguageConfig<Properties> {
     private final Languaged languaged;
 
-    public SimpleLanguageConfig(Languaged program, String folder, String locale) {
-        this(program, folder, folder.isEmpty() ? program.getDataFolder() : new File(program.getDataFolder(), folder), locale);
-    }
-
-    public SimpleLanguageConfig(Languaged program, String resourceFolder, File folder, String locale) {
-        super(resourceFolder, folder, locale);
+    public SimpleLanguageConfig(Languaged program, String resourceFolder, File resourceFile, String locale) {
+        super(resourceFolder, resourceFile, locale);
         this.languaged = program;
         saveConfigResource();
         loadConfig();

@@ -45,13 +45,14 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, FileConf
                 } catch (NoSuchMethodError ignored) {}
             }
             return null;
-        }, configs);
+        }, "lang.", ".yml", configs);
         this.plugin = plugin;
         loadConfigs();
     }
 
     @Override
     public void loadConfigs() {
-        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BukkitLanguageConfig(plugin, getResourceFolder(), getFolder(), locale));
+        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BukkitLanguageConfig(plugin, getResourceFolder(),
+                new File(getFolder(), filePrefix + locale + fileSuffix), locale));
     }
 }

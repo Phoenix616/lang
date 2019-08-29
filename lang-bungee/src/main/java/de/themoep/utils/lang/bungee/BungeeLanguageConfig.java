@@ -36,12 +36,8 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
 
     private final Plugin plugin;
 
-    public BungeeLanguageConfig(Plugin plugin, String folder, String locale) {
-        this(plugin, folder, folder.isEmpty() ? plugin.getDataFolder() : new File(plugin.getDataFolder(), folder), locale);
-    }
-
-    public BungeeLanguageConfig(Plugin plugin, String resourceFolder, File folder, String locale) {
-        super(resourceFolder, folder, locale);
+    public BungeeLanguageConfig(Plugin plugin, String resourceFolder, File configFile, String locale) {
+        super(resourceFolder, configFile, locale);
         this.plugin = plugin;
         saveConfigResource();
         loadConfig();

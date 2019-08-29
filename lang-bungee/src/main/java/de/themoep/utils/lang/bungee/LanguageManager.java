@@ -43,13 +43,14 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, Configur
                 return ((ProxiedPlayer) sender).getLocale().getLanguage().replace('-', '_');
             }
             return null;
-        }, configs);
+        }, "lang.", ".yml", configs);
         this.plugin = plugin;
         loadConfigs();
     }
 
     @Override
     public void loadConfigs() {
-        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BungeeLanguageConfig(plugin, getResourceFolder(), getFolder(), locale));
+        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BungeeLanguageConfig(plugin, getResourceFolder(),
+                new File(getFolder(), filePrefix + locale + fileSuffix), locale));
     }
 }
