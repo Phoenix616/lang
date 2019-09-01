@@ -32,7 +32,11 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
     private final Languaged languaged;
 
     public SimpleLanguageConfig(Languaged program, String resourceFolder, File resourceFile, String locale) {
-        super(resourceFolder, resourceFile, locale);
+        this(program, resourceFolder, resourceFile, locale, true);
+    }
+
+    public SimpleLanguageConfig(Languaged program, String resourceFolder, File resourceFile, String locale, boolean saveFile) {
+        super(resourceFolder, resourceFile, locale, saveFile);
         this.languaged = program;
         saveConfigResource();
         loadConfig();
@@ -40,11 +44,13 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
 
     @Override
     public void loadConfig() {
-        try {
-            config = new Properties();
-            config.load(new FileReader(configFile));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (saveFile && configFile.exists()) {
+            try {
+                config = new Properties();
+                config.load(new FileReader(configFile));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -57,7 +63,7 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
             }
             defaultConfig = config = new Properties();
             defaultConfig.load(in);
-            if (!configFile.exists()) {
+            if (saveFile && !configFile.exists()) {
                 File parent = configFile.getParentFile();
                 if (!parent.exists()) {
                     parent.mkdirs();

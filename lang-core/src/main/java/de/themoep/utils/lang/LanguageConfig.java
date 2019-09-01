@@ -30,6 +30,7 @@ public abstract class LanguageConfig<C> {
     private final String locale;
     protected final String resourcePath;
     protected final File configFile;
+    protected final boolean saveFile;
 
     private String placeholderPrefix = "%";
     private String placeholderSuffix = "%";
@@ -38,8 +39,13 @@ public abstract class LanguageConfig<C> {
     protected C defaultConfig;
 
     protected LanguageConfig(String resourceFolder, File configFile, String locale) {
+        this(resourceFolder, configFile, locale, true);
+    }
+
+    protected LanguageConfig(String resourceFolder, File configFile, String locale, boolean saveFile) {
         this.locale = locale;
         this.configFile = configFile;
+        this.saveFile = saveFile;
         this.resourcePath = resourceFolder.isEmpty() ? configFile.getName() : (resourceFolder + "/" + configFile.getName());
     }
 

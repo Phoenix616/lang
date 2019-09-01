@@ -35,7 +35,11 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
     private final Plugin plugin;
 
     public BukkitLanguageConfig(Plugin plugin, String resourceFolder, File configFile, String locale) {
-        super(resourceFolder, configFile, locale);
+        this(plugin, resourceFolder, configFile, locale, true);
+    }
+
+    public BukkitLanguageConfig(Plugin plugin, String resourceFolder, File configFile, String locale, boolean saveFile) {
+        super(resourceFolder, configFile, locale, saveFile);
         this.plugin = plugin;
         saveConfigResource();
         loadConfig();
@@ -43,7 +47,9 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
 
     @Override
     public void loadConfig() {
-        config = YamlConfiguration.loadConfiguration(configFile);
+        if (saveFile && configFile.exists()) {
+            config = YamlConfiguration.loadConfiguration(configFile);
+        }
     }
 
     @Override
@@ -53,8 +59,8 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
                 plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
                 return false;
             }
-            defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(in));
-            if (!configFile.exists()) {
+            defaultConfig = config = YamlConfiguration.loadConfiguration(new InputStreamReader(in));
+            if (saveFile && !configFile.exists()) {
                 File parent = configFile.getParentFile();
                 if (!parent.exists()) {
                     parent.mkdirs();

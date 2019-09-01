@@ -30,12 +30,20 @@ public class LanguageManager extends LanguageManagerCore<Languaged.User, Propert
         this(languaged, "languages", defaultLocale, configs);
     }
 
+    public LanguageManager(Languaged languaged, String defaultLocale, boolean saveFiles, SimpleLanguageConfig... configs) {
+        this(languaged, "languages", "languages", defaultLocale, saveFiles, configs);
+    }
+
     public LanguageManager(Languaged languaged, String folder, String defaultLocale, SimpleLanguageConfig... configs) {
         this(languaged, folder, folder, defaultLocale, configs);
     }
 
     public LanguageManager(Languaged languaged, String resourceFolder, String folder, String defaultLocale, SimpleLanguageConfig... configs) {
-        super(defaultLocale, resourceFolder, new File(languaged.getDataFolder(), folder), sender -> null, "lang.", ".properties", configs);
+        this(languaged, resourceFolder, folder, defaultLocale, true, configs);
+    }
+
+    public LanguageManager(Languaged languaged, String resourceFolder, String folder, String defaultLocale, boolean saveFiles, SimpleLanguageConfig... configs) {
+        super(defaultLocale, resourceFolder, new File(languaged.getDataFolder(), folder), sender -> null, "lang.", ".properties", saveFiles, configs);
         this.languaged = languaged;
         loadConfigs();
     }
@@ -44,6 +52,6 @@ public class LanguageManager extends LanguageManagerCore<Languaged.User, Propert
     public void loadConfigs() {
         loadConfigs(languaged.getClass(), languaged.getLogger(), locale ->
                 new SimpleLanguageConfig(languaged, getResourceFolder(),
-                        new File(getFolder(), filePrefix + locale + fileSuffix), locale));
+                        new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }
 }

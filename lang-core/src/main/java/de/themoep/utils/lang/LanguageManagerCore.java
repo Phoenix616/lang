@@ -52,6 +52,7 @@ public abstract class LanguageManagerCore<S, C> {
     private final File folder;
     protected final String filePrefix;
     protected final String fileSuffix;
+    protected final boolean saveFiles;
     private String defaultLocale;
     private LanguageConfig<C> defaultConfig = null;
 
@@ -61,7 +62,7 @@ public abstract class LanguageManagerCore<S, C> {
     private String placeholderPrefix = "%";
     private String placeholderSuffix = "%";
 
-    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, String filePrefix, String fileSuffix, LanguageConfig<C>... configs) {
+    protected LanguageManagerCore(String defaultLocale, String resourceFolder, File folder, LanguageProvider<S> provider, String filePrefix, String fileSuffix, boolean saveFiles, LanguageConfig<C>... configs) {
         this.defaultLocale = defaultLocale;
         this.filePrefix = filePrefix;
         this.fileSuffix = fileSuffix;
@@ -71,6 +72,7 @@ public abstract class LanguageManagerCore<S, C> {
         this.resourceFolder = resourceFolder;
         this.folder = folder;
         this.provider = provider;
+        this.saveFiles = saveFiles;
         for (LanguageConfig config : configs) {
             addConfig(config);
         }
@@ -98,12 +100,14 @@ public abstract class LanguageManagerCore<S, C> {
         }
 
         // Load all files in plugin data folder that aren't already loaded
-        loadInTree(folder.toPath(), logger, locale -> {
-            if (!languages.containsKey(locale.toLowerCase(Locale.ENGLISH))) {
-                return configCreator.apply(locale);
-            }
-            return null;
-        });
+        if (saveFiles) {
+            loadInTree(folder.toPath(), logger, locale -> {
+                if (!languages.containsKey(locale.toLowerCase(Locale.ENGLISH))) {
+                    return configCreator.apply(locale);
+                }
+                return null;
+            });
+        }
     }
 
     private void loadInTree(Path path, Logger logger, Function<String, LanguageConfig<C>> configCreator) {

@@ -37,7 +37,11 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
     private final Plugin plugin;
 
     public BungeeLanguageConfig(Plugin plugin, String resourceFolder, File configFile, String locale) {
-        super(resourceFolder, configFile, locale);
+        this(plugin, resourceFolder, configFile, locale, true);
+    }
+
+    public BungeeLanguageConfig(Plugin plugin, String resourceFolder, File configFile, String locale, boolean saveFile) {
+        super(resourceFolder, configFile, locale, saveFile);
         this.plugin = plugin;
         saveConfigResource();
         loadConfig();
@@ -45,10 +49,12 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
 
     @Override
     public void loadConfig() {
-        try {
-            config = yml.load(configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (saveFile && configFile.exists()) {
+            try {
+                config = yml.load(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -60,7 +66,7 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
                 return false;
             }
             defaultConfig = config = yml.load(in);
-            if (!configFile.exists()) {
+            if (saveFile && !configFile.exists()) {
                 File parent = configFile.getParentFile();
                 if (!parent.exists()) {
                     parent.mkdirs();

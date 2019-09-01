@@ -33,17 +33,25 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, Configur
         this(plugin, "languages", defaultLocale, configs);
     }
 
+    public LanguageManager(Plugin plugin, String defaultLocale, boolean saveFiles, BungeeLanguageConfig... configs) {
+        this(plugin, "languages", "languages", defaultLocale, saveFiles, configs);
+    }
+
     public LanguageManager(Plugin plugin, String folder, String defaultLocale, BungeeLanguageConfig... configs) {
         this(plugin, folder, folder, defaultLocale, configs);
     }
 
     public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, BungeeLanguageConfig... configs) {
+        this(plugin, resourceFolder, folder, defaultLocale, true, configs);
+    }
+
+    public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, boolean saveFiles, BungeeLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
             if (sender instanceof ProxiedPlayer) {
                 return ((ProxiedPlayer) sender).getLocale().getLanguage().replace('-', '_');
             }
             return null;
-        }, "lang.", ".yml", configs);
+        }, "lang.", ".yml", saveFiles, configs);
         this.plugin = plugin;
         loadConfigs();
     }
@@ -51,6 +59,6 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, Configur
     @Override
     public void loadConfigs() {
         loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BungeeLanguageConfig(plugin, getResourceFolder(),
-                new File(getFolder(), filePrefix + locale + fileSuffix), locale));
+                new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }
 }
