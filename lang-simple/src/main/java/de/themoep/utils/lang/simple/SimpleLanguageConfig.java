@@ -83,7 +83,12 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
 
     @Override
     public boolean contains(String key) {
-        return config.contains(key);
+        return contains(key, false);
+    }
+
+    @Override
+    public boolean contains(String key, boolean checkDefault) {
+        return config.containsKey(key) || (checkDefault && defaultConfig != null && defaultConfig.containsKey(key));
     }
 
     @Override

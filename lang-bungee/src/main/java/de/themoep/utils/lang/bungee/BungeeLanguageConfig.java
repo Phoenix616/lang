@@ -51,7 +51,7 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
     public void loadConfig() {
         if (saveFile && configFile.exists()) {
             try {
-                config = yml.load(configFile);
+                config = yml.load(configFile, defaultConfig);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,12 +86,17 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
 
     @Override
     public boolean contains(String key) {
-        return config.contains(key);
+        return contains(key, false);
+    }
+
+    @Override
+    public boolean contains(String key, boolean checkDefault) {
+        return config.contains(key) || (checkDefault && defaultConfig != null && defaultConfig.contains(key));
     }
 
     @Override
     public String get(String key) {
-        Object o = config.get(key, defaultConfig != null ? defaultConfig.get(key) : null);
+        Object o = config.get(key);
         String string = null;
         if (o instanceof String) {
             string = (String) o;

@@ -49,6 +49,7 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
     public void loadConfig() {
         if (saveFile && configFile.exists()) {
             config = YamlConfiguration.loadConfiguration(configFile);
+            config.setDefaults(defaultConfig);
         }
     }
 
@@ -80,19 +81,21 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
 
     @Override
     public boolean contains(String key) {
-        return config.contains(key, true);
+        return contains(key, false);
+    }
+
+    @Override
+    public boolean contains(String key, boolean checkDefault) {
+        return config.contains(key, !checkDefault);
     }
 
     @Override
     public String get(String key) {
         String string = null;
         if (config.isString(key)) {
-            string = config.getString(key, defaultConfig != null ? defaultConfig.getString(key) : null);
+            string = config.getString(key);
         } else if (config.isList(key)) {
             List<String> stringList = config.getStringList(key);
-            if (stringList == null) {
-                stringList = defaultConfig.getStringList(key);
-            }
             if (stringList != null) {
                 string = String.join("\n", stringList);
             }

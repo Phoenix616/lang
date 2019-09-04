@@ -68,6 +68,14 @@ public abstract class LanguageConfig<C> {
     public abstract boolean contains(String key);
 
     /**
+     * Check if the config contains a certain key
+     * @param key           The key of the string
+     * @param checkDefault  Whether or not to check the default config
+     * @return <tt>true</tt> if this config (and the default) has this key, <tt>false</tt> if not
+     */
+    public abstract boolean contains(String key, boolean checkDefault);
+
+    /**
      * Get a string from the config by its key
      * @param key   The key of the string
      * @return The message or an error message if it doesn't exist; never null! (use {@link #contains(String)} to check existance)
