@@ -49,7 +49,9 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
     public void loadConfig() {
         if (saveFile && configFile.exists()) {
             config = YamlConfiguration.loadConfiguration(configFile);
-            config.setDefaults(defaultConfig);
+            if (defaultConfig != null) {
+                config.setDefaults(defaultConfig);
+            }
         }
     }
 
