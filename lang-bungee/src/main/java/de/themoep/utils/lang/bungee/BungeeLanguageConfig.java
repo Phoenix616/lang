@@ -49,7 +49,7 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
 
     @Override
     public void loadConfig() {
-        if (saveFile && configFile.exists()) {
+        if (configFile != null && configFile.exists()) {
             try {
                 config = yml.load(configFile, defaultConfig);
             } catch (IOException e) {
