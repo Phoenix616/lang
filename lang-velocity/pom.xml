@@ -22,21 +22,40 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.themoep.utils</groupId>
-    <artifactId>lang</artifactId>
-    <version>1.2-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <artifactId>lang-velocity</artifactId>
 
-    <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-    </properties>
+    <parent>
+        <artifactId>lang</artifactId>
+        <groupId>de.themoep.utils</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
 
-    <modules>
-        <module>lang-core</module>
-        <module>lang-simple</module>
-        <module>lang-bukkit</module>
-        <module>lang-bungee</module>
-        <module>lang-velocity</module>
-    </modules>
+    <repositories>
+        <repository>
+            <id>velocity-repo</id>
+            <url>https://repo.velocitypowered.com/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>1.0.9-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>lang-core</artifactId>
+            <version>${version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
 </project>
