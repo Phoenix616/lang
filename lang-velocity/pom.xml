@@ -41,19 +41,13 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${groupId}</groupId>
             <artifactId>lang-core</artifactId>
             <version>${version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.4.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

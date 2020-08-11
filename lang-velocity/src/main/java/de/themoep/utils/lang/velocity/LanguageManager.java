@@ -18,14 +18,14 @@ package de.themoep.utils.lang.velocity;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.typesafe.config.Config;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import de.themoep.utils.lang.LanguageManagerCore;
+import ninja.leaping.configurate.ConfigurationNode;
 
 import java.io.File;
 
-public class LanguageManager extends LanguageManagerCore<CommandSource, Config> {
+public class LanguageManager extends LanguageManagerCore<CommandSource, ConfigurationNode> {
     private final Languaged plugin;
 
     public LanguageManager(Languaged plugin, String defaultLocale, VelocityLanguageConfig... configs) {
@@ -50,7 +50,7 @@ public class LanguageManager extends LanguageManagerCore<CommandSource, Config> 
                 return ((Player) sender).getPlayerSettings().getLocale().getLanguage().replace('-', '_');
             }
             return null;
-        }, "lang.", ".conf", saveFiles, configs);
+        }, "lang.", ".yml", saveFiles, configs);
         this.plugin = plugin;
         loadConfigs();
     }

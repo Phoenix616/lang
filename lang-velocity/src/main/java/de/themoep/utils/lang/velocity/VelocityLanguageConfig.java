@@ -18,21 +18,27 @@ package de.themoep.utils.lang.velocity;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
+import com.google.common.reflect.TypeToken;
 import de.themoep.utils.lang.LanguageConfig;
 import net.kyori.text.format.TextColor;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ValueType;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
-public class VelocityLanguageConfig extends LanguageConfig<Config> {
+public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
+
+    private static final Pattern KEY_PATTERN = Pattern.compile("\\.");
 
     private final Languaged plugin;
 
@@ -50,19 +56,26 @@ public class VelocityLanguageConfig extends LanguageConfig<Config> {
     @Override
     public void loadConfig() {
         if (configFile != null && configFile.exists()) {
-            config = ConfigFactory.parseFile(configFile)
-                    .withFallback(ConfigFactory.load(defaultConfig));
+            try {
+                config = YAMLConfigurationLoader.builder().setIndent(2).setPath(configFile.toPath()).build().load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public boolean saveConfigResource() {
-        try (InputStream in = plugin.getResourceAsStream(resourcePath);) {
+        try (InputStream in = plugin.getResourceAsStream(resourcePath)) {
             if (in == null) {
                 plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "!");
                 return false;
             }
-            defaultConfig = config = ConfigFactory.load(resourcePath);
+
+            defaultConfig = config = YAMLConfigurationLoader.builder()
+                    .setIndent(2)
+                    .setSource(() -> new BufferedReader(new InputStreamReader(plugin.getResourceAsStream(resourcePath))))
+                    .build().load();
             if (saveFile && !configFile.exists()) {
                 File parent = configFile.getParentFile();
                 if (!parent.exists()) {
@@ -88,20 +101,25 @@ public class VelocityLanguageConfig extends LanguageConfig<Config> {
 
     @Override
     public boolean contains(String key, boolean checkDefault) {
-        return config.hasPath(key) || (checkDefault && defaultConfig != null && defaultConfig.hasPath(key));
+        return !config.getNode(splitKey(key)).isVirtual() || (checkDefault && defaultConfig != null && !defaultConfig.getNode(splitKey(key)).isVirtual());
     }
 
     @Override
     public String get(String key) {
-        ConfigValue o = config.getValue(key);
+        ConfigurationNode o = config.getNode(splitKey(key));
+        if (o.isVirtual() && defaultConfig != null) {
+            o = defaultConfig.getNode(splitKey(key));
+        }
         String string = null;
-        if (o.valueType() == ConfigValueType.STRING) {
-            string = (String) o.unwrapped();
-        } else if (o.valueType() == ConfigValueType.LIST) {
-            List<String> stringList = (List<String>) o.unwrapped();
-            if (stringList != null) {
+        if (o.getValueType() == ValueType.LIST) {
+            try {
+                List<String> stringList = o.getList(TypeToken.of(String.class));
                 string = String.join("\n", stringList);
+            } catch (ObjectMappingException e) {
+                e.printStackTrace();
             }
+        } else {
+            string = o.getString();
         }
         if (string == null) {
             return TextColor.RED + "Missing language key " + TextColor.YELLOW + key + TextColor.RED + " for locale " + TextColor.YELLOW + getLocale();
@@ -110,7 +128,11 @@ public class VelocityLanguageConfig extends LanguageConfig<Config> {
     }
 
     @Override
-    public Config getRawConfig() {
+    public ConfigurationNode getRawConfig() {
         return config;
+    }
+
+    private static Object[] splitKey(String key) {
+        return KEY_PATTERN.split(key);
     }
 }
