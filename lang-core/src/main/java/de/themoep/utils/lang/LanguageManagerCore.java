@@ -135,7 +135,7 @@ public abstract class LanguageManagerCore<S, C> {
     /**
      * Add a new language config for a specific locale
      * @param config    The language config that holds all messages for the specified locale
-     * @return The previous language config if it existed or <tt>null</tt> if not
+     * @return The previous language config if it existed or <code>null</code> if not
      */
     public LanguageConfig<C> addConfig(LanguageConfig<C> config) {
         config.setPlaceholderPrefix(placeholderPrefix);

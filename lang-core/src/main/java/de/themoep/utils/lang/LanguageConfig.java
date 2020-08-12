@@ -63,7 +63,7 @@ public abstract class LanguageConfig<C> {
     /**
      * Check if the config contains a certain key
      * @param key   The key of the string
-     * @return <tt>true</tt> if this config (and not the defaults) has this key, <tt>false</tt> if not
+     * @return <code>true</code> if this config (and not the defaults) has this key, <code>false</code> if not
      */
     public abstract boolean contains(String key);
 
@@ -71,7 +71,7 @@ public abstract class LanguageConfig<C> {
      * Check if the config contains a certain key
      * @param key           The key of the string
      * @param checkDefault  Whether or not to check the default config
-     * @return <tt>true</tt> if this config (and the default) has this key, <tt>false</tt> if not
+     * @return <code>true</code> if this config (and the default) has this key, <code>false</code> if not
      */
     public abstract boolean contains(String key, boolean checkDefault);
 
