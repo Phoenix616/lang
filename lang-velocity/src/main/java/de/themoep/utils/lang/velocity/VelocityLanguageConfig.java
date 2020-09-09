@@ -74,7 +74,7 @@ public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
 
             defaultConfig = config = YAMLConfigurationLoader.builder()
                     .setIndent(2)
-                    .setSource(() -> new BufferedReader(new InputStreamReader(plugin.getResourceAsStream(resourcePath))))
+                    .setSource(() -> new BufferedReader(new InputStreamReader(in)))
                     .build().load();
             if (saveFile && !configFile.exists()) {
                 File parent = configFile.getParentFile();
