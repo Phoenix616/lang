@@ -20,14 +20,14 @@ Has the ability to select the correct locale depending on the user.
 ```
 
 ## Usage
-See this examples for [Bukkit](https://github.com/Phoenix616/lang/wiki/Bukkit-Example), 
-[Bungee](https://github.com/Phoenix616/lang/wiki/Bungee-Example) and 
-[Velocity](https://github.com/Phoenix616/lang/wiki/Velocity-Example) 
-plugins as well [standalone applications](https://github.com/Phoenix616/lang/wiki/Standalone-Example).
+See this examples for [Bukkit](https://wiki.phoenix616.dev/example:lang:bukkit), 
+[Bungee](https://wiki.phoenix616.dev/example:lang:bungee) and 
+[Velocity](https://wiki.phoenix616.dev/example:lang:standalone) 
+plugins as well [standalone applications](https://wiki.phoenix616.dev/example:lang:standalone).
 
 Of course you can implement `lang-core` yourself on additional platforms. PRs welcome!
 
-Take a look at the examples in the [wiki](https://github.com/Phoenix616/lang/wiki) and the [Javadocs](https://docs.phoenix616.dev/lang/) for more fine-grained control.
+Take a look at the examples in the [wiki](https://wiki.phoenix616.dev/example:lang:) and the [Javadocs](https://docs.phoenix616.dev/lang/) for more fine-grained control.
 (Almost everything is configurable!)
 
 ## License
