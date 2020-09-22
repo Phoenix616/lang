@@ -58,7 +58,7 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
     public boolean saveConfigResource() {
         try (InputStream in = languaged.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                languaged.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found for " + languaged.getName() + "!");
+                languaged.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found for " + languaged.getName() + "!");
                 return false;
             }
             defaultConfig = config = new Properties();
@@ -72,11 +72,11 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
                     config.store(new FileWriter(configFile), languaged.getName() + " - " + getClass().getSimpleName() + " " + getLocale());
                     return true;
                 } catch (IOException ex) {
-                    languaged.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+                    languaged.getLangLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
                 }
             }
         } catch (IOException ex) {
-            languaged.getLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
+            languaged.getLangLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
         }
         return false;
     }

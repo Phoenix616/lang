@@ -50,7 +50,7 @@ public class LanguageManager extends LanguageManagerCore<Languaged.User, Propert
 
     @Override
     public void loadConfigs() {
-        loadConfigs(languaged.getClass(), languaged.getLogger(), locale ->
+        loadConfigs(languaged.getClass(), languaged.getLangLogger(), locale ->
                 new SimpleLanguageConfig(languaged, getResourceFolder(),
                         new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }

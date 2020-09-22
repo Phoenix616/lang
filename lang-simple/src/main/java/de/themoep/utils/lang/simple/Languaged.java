@@ -35,7 +35,7 @@ public interface Languaged {
      * Get the logger of the languaged object
      * @return The logger
      */
-    LangLogger getLogger();
+    LangLogger getLangLogger();
 
     /**
      * Get a resource corresponding to this languaged object.
