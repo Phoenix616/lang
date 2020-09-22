@@ -68,7 +68,7 @@ public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
     public boolean saveConfigResource() {
         try (InputStream in = plugin.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "!");
+                plugin.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "!");
                 return false;
             }
 
@@ -85,11 +85,11 @@ public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
                     Files.copy(in, configFile.toPath());
                     return true;
                 } catch (IOException ex) {
-                    plugin.getLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
+                    plugin.getLangLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
                 }
             }
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
+            plugin.getLangLogger().log(Level.SEVERE, "Could not load default config from " + resourcePath, ex);
         }
         return false;
     }

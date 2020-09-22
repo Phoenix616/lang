@@ -57,7 +57,7 @@ public class LanguageManager extends LanguageManagerCore<CommandSource, Configur
 
     @Override
     public void loadConfigs() {
-        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new VelocityLanguageConfig(plugin, getResourceFolder(),
+        loadConfigs(plugin.getClass(), plugin.getLangLogger(), locale -> new VelocityLanguageConfig(plugin, getResourceFolder(),
                 new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }
 }

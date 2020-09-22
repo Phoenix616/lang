@@ -40,7 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The core language manager
@@ -81,7 +80,7 @@ public abstract class LanguageManagerCore<S, C> {
 
     public abstract void loadConfigs();
 
-    protected void loadConfigs(Class<?> pluginClass, Logger logger, Function<String, LanguageConfig<C>> configCreator) {
+    protected void loadConfigs(Class<?> pluginClass, LangLogger logger, Function<String, LanguageConfig<C>> configCreator) {
         try {
             URL url = pluginClass.getResource("/" + resourceFolder);
             if (url != null) {
@@ -110,7 +109,7 @@ public abstract class LanguageManagerCore<S, C> {
         }
     }
 
-    private void loadInTree(Path path, Logger logger, Function<String, LanguageConfig<C>> configCreator) {
+    private void loadInTree(Path path, LangLogger logger, Function<String, LanguageConfig<C>> configCreator) {
         try {
             Files.walkFileTree(path, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
                 @Override

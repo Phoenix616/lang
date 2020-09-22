@@ -18,9 +18,10 @@ package de.themoep.utils.lang.velocity;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import de.themoep.utils.lang.LangLogger;
+
 import java.io.File;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 public interface Languaged {
 
@@ -34,7 +35,7 @@ public interface Languaged {
      * Get the logger of the languaged object
      * @return The logger
      */
-    Logger getLogger();
+    LangLogger getLangLogger();
 
     /**
      * Get a resource corresponding to this languaged object.

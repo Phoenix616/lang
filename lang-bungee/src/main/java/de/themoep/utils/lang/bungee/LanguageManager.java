@@ -18,6 +18,7 @@ package de.themoep.utils.lang.bungee;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import de.themoep.utils.lang.LangLogger;
 import de.themoep.utils.lang.LanguageManagerCore;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -25,6 +26,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
 import java.io.File;
+import java.util.logging.Level;
 
 public class LanguageManager extends LanguageManagerCore<CommandSender, Configuration> {
     private final Plugin plugin;
@@ -58,7 +60,17 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, Configur
 
     @Override
     public void loadConfigs() {
-        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BungeeLanguageConfig(plugin, getResourceFolder(),
+        loadConfigs(plugin.getClass(), new LangLogger() {
+            @Override
+            public void log(Level level, String message) {
+                plugin.getLogger().log(level, message);
+            }
+
+            @Override
+            public void log(Level level, String message, Throwable e) {
+                plugin.getLogger().log(level, message, e);
+            }
+        }, locale -> new BungeeLanguageConfig(plugin, getResourceFolder(),
                 new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }
 }

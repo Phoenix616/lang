@@ -18,6 +18,7 @@ package de.themoep.utils.lang.bukkit;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import de.themoep.utils.lang.LangLogger;
 import de.themoep.utils.lang.LanguageManagerCore;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.logging.Level;
 
 public class LanguageManager extends LanguageManagerCore<CommandSender, FileConfiguration> {
     private final Plugin plugin;
@@ -60,7 +62,17 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, FileConf
 
     @Override
     public void loadConfigs() {
-        loadConfigs(plugin.getClass(), plugin.getLogger(), locale -> new BukkitLanguageConfig(plugin, getResourceFolder(),
+        loadConfigs(plugin.getClass(), new LangLogger() {
+            @Override
+            public void log(Level level, String message) {
+                plugin.getLogger().log(level, message);
+            }
+
+            @Override
+            public void log(Level level, String message, Throwable e) {
+                plugin.getLogger().log(level, message, e);
+            }
+        }, locale -> new BukkitLanguageConfig(plugin, getResourceFolder(),
                 new File(getFolder(), filePrefix + locale + fileSuffix), locale, saveFiles));
     }
 }
