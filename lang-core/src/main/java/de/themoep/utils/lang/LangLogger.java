@@ -21,7 +21,7 @@ package de.themoep.utils.lang;
 import java.util.logging.Level;
 
 public interface LangLogger {
-    void log(Level info, String message);
+    void log(Level level, String message);
 
-    void log(Level info, String message, Throwable e);
+    void log(Level level, String message, Throwable e);
 }
