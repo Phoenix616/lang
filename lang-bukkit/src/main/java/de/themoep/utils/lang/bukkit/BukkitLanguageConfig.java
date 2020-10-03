@@ -88,7 +88,10 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
 
     @Override
     public boolean contains(String key, boolean checkDefault) {
-        return config.contains(key, !checkDefault);
+        if (checkDefault) {
+            return config.contains(key);
+        }
+        return config.get(key, null) != null;
     }
 
     @Override
