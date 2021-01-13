@@ -46,7 +46,7 @@ public class LanguageManager extends LanguageManagerCore<CommandSource, Configur
 
     public LanguageManager(Languaged plugin, String resourceFolder, String folder, String defaultLocale, boolean saveFiles, VelocityLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
-            if (sender instanceof Player) {
+            if (sender instanceof Player && ((Player) sender).getPlayerSettings().getLocale() != null) {
                 return ((Player) sender).getPlayerSettings().getLocale().getLanguage().replace('-', '_');
             }
             return null;

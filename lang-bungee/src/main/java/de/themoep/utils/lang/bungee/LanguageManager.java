@@ -49,7 +49,7 @@ public class LanguageManager extends LanguageManagerCore<CommandSender, Configur
 
     public LanguageManager(Plugin plugin, String resourceFolder, String folder, String defaultLocale, boolean saveFiles, BungeeLanguageConfig... configs) {
         super(defaultLocale, resourceFolder, new File(plugin.getDataFolder(), folder), sender -> {
-            if (sender instanceof ProxiedPlayer) {
+            if (sender instanceof ProxiedPlayer && ((ProxiedPlayer) sender).getLocale() != null) {
                 return ((ProxiedPlayer) sender).getLocale().getLanguage().replace('-', '_');
             }
             return null;
