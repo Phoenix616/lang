@@ -35,11 +35,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * The core language manager
@@ -81,6 +85,7 @@ public abstract class LanguageManagerCore<S, C> {
     public abstract void loadConfigs();
 
     protected void loadConfigs(Class<?> pluginClass, LangLogger logger, Function<String, LanguageConfig<C>> configCreator) {
+        Set<String> loaded = new HashSet<>(languages.keySet());
         try {
             URL url = pluginClass.getResource("/" + resourceFolder);
             if (url != null) {
@@ -95,7 +100,14 @@ public abstract class LanguageManagerCore<S, C> {
                 logger.log(Level.WARNING, "Could not find folder '/" + resourceFolder + "' in jar!");
             }
         } catch (URISyntaxException | IOException e) {
-            logger.log(Level.WARNING, "Failed to automatically load languages from the jar!", e);
+            logger.log(Level.WARNING, "Error while trying to automatically load languages from the jar!", e);
+        }
+        if (loaded.size() < languages.size()) {
+            List<String> newLocales = languages.keySet().stream().filter(s -> !loaded.contains(s)).collect(Collectors.toList());
+            logger.log(Level.INFO, "Found locale"
+                    + (newLocales.size() == 1
+                            ? " " + newLocales.get(0)
+                            : "s " + String.join(", ", newLocales)));
         }
 
         // Load all files in plugin data folder that aren't already loaded
@@ -120,7 +132,6 @@ public abstract class LanguageManagerCore<S, C> {
                         LanguageConfig<C> config = configCreator.apply(locale);
                         if (config != null) {
                             addConfig(config);
-                            logger.log(Level.INFO, "Found locale " + locale + "!");
                         }
                     }
                     return FileVisitResult.CONTINUE;
