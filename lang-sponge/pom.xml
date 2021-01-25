@@ -22,35 +22,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.themoep.utils</groupId>
-    <artifactId>lang</artifactId>
-    <version>1.3-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <artifactId>lang-sponge</artifactId>
 
-    <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-    </properties>
+    <parent>
+        <artifactId>lang</artifactId>
+        <groupId>de.themoep.utils</groupId>
+        <version>1.3-SNAPSHOT</version>
+    </parent>
 
-    <modules>
-        <module>lang-core</module>
-        <module>lang-simple</module>
-        <module>lang-bukkit</module>
-        <module>lang-sponge</module>
-        <module>lang-bungee</module>
-        <module>lang-velocity</module>
-    </modules>
+    <repositories>
+        <repository>
+            <id>sponge-repo</id>
+            <url>https://repo.spongepowered.org/maven</url>
+        </repository>
+    </repositories>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <source>8</source>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>7.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>lang-core</artifactId>
+            <version>${version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -1,5 +1,5 @@
 # lang
-Language config framework for Bukkit, Bungee, Velocity and standalone Java programs.
+Language config framework for Bukkit, Sponge, Bungee, Velocity and standalone Java programs.
 
 Has the ability to select the correct locale depending on the user.
 
@@ -20,7 +20,7 @@ Has the ability to select the correct locale depending on the user.
 ```
 
 ## Usage
-See this examples for [Bukkit](https://wiki.phoenix616.dev/library:lang:example:bukkit), 
+See this examples for [Bukkit](https://wiki.phoenix616.dev/library:lang:example:bukkit), [Sponge](https://wiki.phoenix616.dev/library:lang:example:sponge), 
 [Bungee](https://wiki.phoenix616.dev/library:lang:example:bungee) and 
 [Velocity](https://wiki.phoenix616.dev/library:lang:example:standalone) 
 plugins as well [standalone applications](https://wiki.phoenix616.dev/library:lang:example:standalone).
