@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.zip.ZipError;
 
 /**
  * The core language manager
@@ -99,7 +100,7 @@ public abstract class LanguageManagerCore<S, C> {
             } else {
                 logger.log(Level.WARNING, "Could not find folder '/" + resourceFolder + "' in jar!");
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException | ZipError e) {
             logger.log(Level.WARNING, "Error while trying to automatically load languages from the jar!", e);
         }
         if (loaded.size() < languages.size()) {
