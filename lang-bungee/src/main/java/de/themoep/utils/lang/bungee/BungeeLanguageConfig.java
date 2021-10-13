@@ -109,7 +109,7 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
         if (string == null) {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }
-        return ChatColor.translateAlternateColorCodes('&', string);
+        return string;
     }
 
     @Override

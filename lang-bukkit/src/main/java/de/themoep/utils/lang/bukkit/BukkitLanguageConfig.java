@@ -108,7 +108,7 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
         if (string == null) {
             return ChatColor.RED + "Missing language key " + ChatColor.YELLOW + key + ChatColor.RED + " for locale " + ChatColor.YELLOW + getLocale();
         }
-        return ChatColor.translateAlternateColorCodes('&', string);
+        return string;
     }
 
     @Override
