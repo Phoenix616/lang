@@ -68,7 +68,9 @@ public class SpongeLanguageConfig extends LanguageConfig<ConfigurationNode> {
     public boolean saveConfigResource() {
         try (InputStream in = plugin.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                plugin.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "!");
+                if (Boolean.getBoolean("de.themoep.lang.debug")) {
+                    plugin.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "!");
+                }
                 return false;
             }
 

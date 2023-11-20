@@ -62,7 +62,9 @@ public class BungeeLanguageConfig extends LanguageConfig<Configuration> {
     public boolean saveConfigResource() {
         try (InputStream in = plugin.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getFile().getName() + "!");
+                if (Boolean.getBoolean("de.themoep.utils.lang.debug")) {
+                    plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getFile().getName() + "!");
+                }
                 return false;
             }
             defaultConfig = config = yml.load(in);

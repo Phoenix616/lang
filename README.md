@@ -30,6 +30,8 @@ Of course you can implement `lang-core` yourself on additional platforms. PRs we
 Take a look at the examples in the [wiki](https://wiki.phoenix616.dev/library:lang:) and the [Javadocs](https://docs.phoenix616.dev/lang/) for more fine-grained control.
 (Almost everything is configurable!)
 
+The system property `de.themoep.utils.lang.debug` is provided to enable some debug logging.
+
 ## License
 This library is licensed under the [GPLv3](https://github.com/Phoenix616/lang/blob/master/LICENSE)!
 ```

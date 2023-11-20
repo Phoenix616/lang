@@ -59,7 +59,9 @@ public class BukkitLanguageConfig extends LanguageConfig<FileConfiguration> {
     public boolean saveConfigResource() {
         try (InputStream in = plugin.getResource(resourcePath)) {
             if (in == null) {
-                plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
+                if (Boolean.getBoolean("de.themoep.utils.lang.debug")) {
+                    plugin.getLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found in " + plugin.getName() + "'s jar file!");
+                }
                 return false;
             }
             defaultConfig = config = YamlConfiguration.loadConfiguration(new InputStreamReader(in));

@@ -58,7 +58,9 @@ public class SimpleLanguageConfig extends LanguageConfig<Properties> {
     public boolean saveConfigResource() {
         try (InputStream in = languaged.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                languaged.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found for " + languaged.getName() + "!");
+                if (Boolean.getBoolean("de.themoep.utils.lang.debug")) {
+                    languaged.getLangLogger().log(Level.WARNING, "No default config '" + resourcePath + "' found for " + languaged.getName() + "!");
+                }
                 return false;
             }
             defaultConfig = config = new Properties();
