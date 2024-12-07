@@ -84,7 +84,7 @@ public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
                     parent.mkdirs();
                 }
                 try {
-                    Files.copy(in, configFile.toPath());
+                    Files.copy(plugin.getResourceAsStream(resourcePath), configFile.toPath());
                     return true;
                 } catch (IOException ex) {
                     plugin.getLangLogger().log(Level.SEVERE, "Could not save " + configFile.getName() + " to " + configFile, ex);
