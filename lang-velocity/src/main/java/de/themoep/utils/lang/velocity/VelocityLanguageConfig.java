@@ -20,7 +20,6 @@ package de.themoep.utils.lang.velocity;
 
 import com.google.common.reflect.TypeToken;
 import de.themoep.utils.lang.LanguageConfig;
-import net.kyori.text.format.TextColor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ValueType;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -124,7 +123,7 @@ public class VelocityLanguageConfig extends LanguageConfig<ConfigurationNode> {
             string = o.getString();
         }
         if (string == null) {
-            return TextColor.RED + "Missing language key " + TextColor.YELLOW + key + TextColor.RED + " for locale " + TextColor.YELLOW + getLocale();
+            return "Missing language key " + key + " for locale " + getLocale();
         }
         return string;
     }
