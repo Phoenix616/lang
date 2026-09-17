@@ -32,8 +32,8 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <id>bungee-repo</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
@@ -42,12 +42,11 @@
     </repositories>
 
     <dependencies>
-        <!-- Source: https://mvnrepository.com/artifact/net.md-5/bungeecord-api -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <scope>provided</scope>
-            <version>1.21-R0.4</version>
+            <version>26.1-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>${groupId}</groupId>

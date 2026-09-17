@@ -30,6 +30,11 @@
         <version>1.3-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+    </properties>
+
     <repositories>
         <repository>
             <id>papermc</id>
